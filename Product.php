@@ -4735,7 +4735,11 @@ class ProductCore extends ObjectModel
 
         // Product::getDefaultAttribute is only called if id_product_attribute is missing from the SQL query at the origin of it:
         // consider adding it in order to avoid unnecessary queries
-        $row['allow_oosp'] = Product::isAvailableWhenOutOfStock($row['out_of_stock']);
+        if (isset($row['out_of_stock'])) {
+            $row['allow_oosp'] = Product::isAvailableWhenOutOfStock($row['out_of_stock']);
+        } else {
+            $row['allow_oosp'] = false;
+        }
         if (Combination::isFeatureActive() && $id_product_attribute === null
             && ((isset($row['cache_default_attribute']) && ($ipa_default = $row['cache_default_attribute']) !== null)
                 || ($ipa_default = Product::getDefaultAttribute($row['id_product'], !$row['allow_oosp'])))) {

@@ -65,6 +65,11 @@ class StoreCore extends ObjectModel
     /** @var string Phone number */
     public $phone;
 
+    public $viber;
+    public $wechat;
+    public $messenger;
+    public $telegram;
+
     /** @var string Fax number */
     public $fax;
 
@@ -98,6 +103,12 @@ class StoreCore extends ObjectModel
             'latitude' => array('type' => self::TYPE_FLOAT, 'validate' => 'isCoordinate', 'size' => 13),
             'longitude' => array('type' => self::TYPE_FLOAT, 'validate' => 'isCoordinate', 'size' => 13),
             'phone' => array('type' => self::TYPE_STRING, 'validate' => 'isPhoneNumber', 'size' => 16),
+
+            'viber' => array('type' => self::TYPE_STRING, 'size' => 16),
+            'messenger' => array('type' => self::TYPE_STRING, 'size' => 16),
+            'wechat' => array('type' => self::TYPE_STRING, 'size' => 16),
+            'telegram' => array('type' => self::TYPE_STRING, 'size' => 16),
+
             'fax' => array('type' => self::TYPE_STRING, 'validate' => 'isPhoneNumber', 'size' => 16),
             'email' => array('type' => self::TYPE_STRING, 'validate' => 'isEmail', 'size' => 255),
             'active' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'required' => true),

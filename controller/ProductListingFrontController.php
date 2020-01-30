@@ -555,6 +555,14 @@ abstract class ProductListingFrontControllerCore extends ProductPresentingFrontC
     {
         $filter = $this->get('prestashop.core.filter.front_end_object.search_result_product_collection');
 
+        $filterQueue = $filter->getQueue();
+
+        foreach ($filterQueue as $productSearchFilter) {
+            if ($productSearchFilter instanceof PrestaShop\PrestaShop\Core\Filter\FrontEndObject\SearchResultProductFilter) {
+                $productSearchFilter->whitelist(['availability_message','category','id_category_default','category_name','manufacturer_name']);
+            }
+        }
+
         return $filter->filter($products);
     }
 
@@ -570,6 +578,8 @@ abstract class ProductListingFrontControllerCore extends ProductPresentingFrontC
      */
     protected function doProductSearch($template, $params = array(), $locale = null)
     {
+
+
         if ($this->ajax) {
             ob_end_clean();
             header('Content-Type: application/json');
@@ -578,8 +588,25 @@ abstract class ProductListingFrontControllerCore extends ProductPresentingFrontC
             return;
         } else {
             $variables = $this->getProductSearchVariables();
+
+
+            $total_products = $variables['result']->getTotalProductsCount();
+
+            if ($params['entity'] === 'category') {
+                $bestsellers = ProductSale::getBestSalesCategory($this->context->language->id, 0, ( $total_products * 0.2 ), null, null, $params['id']);
+
+            }
+                // echo '<pre style="background-color:#000;color:#FFF;font-size:20px;overflow:;">';
+                // print_r( $variables['result']->getProducts() );
+                // print_r( $variables['result']->getTotalProductsCount() );
+                // echo '</pre>';
+
+            // foreach ($variables as $key => $value) {
+            // }
+
             $this->context->smarty->assign(array(
                 'listing' => $variables,
+                'bestsellers' => $bestsellers,
             ));
             $this->setTemplate($template, $params, $locale);
         }

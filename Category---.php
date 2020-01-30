@@ -768,14 +768,12 @@ class CategoryCore extends ObjectModel
         if (!Cache::isStored($cacheId)) {
             $result = Db::getInstance()->executeS(
                 '
-				SELECT c.*, cl.*,
-                    COUNT(distinct(id_product)) as nb_products
+				SELECT c.*, cl.*
 				FROM `' . _DB_PREFIX_ . 'category` c
 				' . ($useShopRestriction ? Shop::addSqlAssociation('category', 'c') : '') . '
 				LEFT JOIN `' . _DB_PREFIX_ . 'category_lang` cl ON c.`id_category` = cl.`id_category`' . Shop::addSqlRestrictionOnLang('cl') . '
 				' . (isset($groups) && Group::isFeatureActive() ? 'LEFT JOIN `' . _DB_PREFIX_ . 'category_group` cg ON c.`id_category` = cg.`id_category`' : '') . '
 				' . (isset($idRootCategory) ? 'RIGHT JOIN `' . _DB_PREFIX_ . 'category` c2 ON c2.`id_category` = ' . (int) $idRootCategory . ' AND c.`nleft` >= c2.`nleft` AND c.`nright` <= c2.`nright`' : '') . '
-                LEFT JOIN `' . _DB_PREFIX_ . 'category_product` cp ON cp.id_category = c.id_category
 				WHERE 1 ' . $sqlFilter . ' ' . ($idLang ? 'AND `id_lang` = ' . (int) $idLang : '') . '
 				' . ($active ? ' AND c.`active` = 1' : '') . '
 				' . (isset($groups) && Group::isFeatureActive() ? ' AND cg.`id_group` IN (' . implode(',', array_map('intval', $groups)) . ')' : '') . '
@@ -784,7 +782,6 @@ class CategoryCore extends ObjectModel
 				' . ($orderBy == '' && $useShopRestriction ? ', category_shop.`position` ASC' : '') . '
 				' . ($limit != '' ? $limit : '')
             );
-
 
             $categories = array();
             $buff = array();
